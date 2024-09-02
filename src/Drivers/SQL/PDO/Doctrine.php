@@ -14,8 +14,6 @@ use Illuminate\Database\SqlServerConnection;
 
 trait Doctrine
 {
-    protected $doctrineConnection = null;
-
     protected function getDoctrineSchemaManager()
     {
         $connection = $this->getDoctrineConnection();
@@ -30,20 +28,16 @@ trait Doctrine
      */
     protected function getDoctrineConnection()
     {
-        if (is_null($this->doctrineConnection)) {
-            $driver = $this->getDoctrineDriver();
+        $driver = $this->getDoctrineDriver();
 
-            $connection = $this->getConnection();
+        $connection = $this->getConnection();
 
-            $this->doctrineConnection = new DoctrineConnection(array_filter([
-                'pdo' => $connection->getPdo(),
-                'dbname' => $connection->getDatabaseName(),
-                'driver' => $driver->getName(),
-                'serverVersion' => $connection->getConfig('server_version'),
-            ]), $driver);
-        }
-
-        return $this->doctrineConnection;
+        return new DoctrineConnection(array_filter([
+            'pdo' => $connection->getPdo(),
+            'dbname' => $connection->getDatabaseName(),
+            'driver' => $driver->getName(),
+            'serverVersion' => $connection->getConfig('server_version'),
+        ]), $driver);
     }
 
     protected function getDoctrineDriver(): Driver
